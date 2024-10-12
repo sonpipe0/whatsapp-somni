@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { sendMessageService, processIncomingMessage } from '../services/messageService';
+import { Entry } from '../services/messageService';
 
 export const sendMessage = async (req: Request, res: Response) => {
   const { to, message } = req.body;
@@ -12,11 +13,10 @@ export const sendMessage = async (req: Request, res: Response) => {
 };
 
 export const receiveMessage = async (req: Request, res: Response) => {
-  console.log(req.body);
-  const { from, message } = req.body;
+  const {entry }: { object: string; entry: Entry[] } = req.body;
+  const response = await processIncomingMessage(entry);
   try {
-    await processIncomingMessage(from, message);
-    res.status(200).send('Message received');
+    res.status(200).send('Message received' + response);
   } catch (error: any) {
     res.status(500).json({ error: error?.message });
   }
@@ -34,4 +34,3 @@ export const receiveVerificationRequest = async (req: Request, res: Response) =>
     res.status(400).json({ error: 'Bad Request: Missing hub parameters' });
   }
 };
-
