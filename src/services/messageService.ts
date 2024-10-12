@@ -1,10 +1,11 @@
 import { sendMessageAPI } from '../utils/apiClient';
 
-export const sendMessageService = async (to: string, message: string) => {
+export const sendMessageService = async (to: number, message: string) => {
   try {
     const response = await sendMessageAPI(to, message);
     return response.data;
   } catch (error) {
+    console.log(error);
     throw new Error('Failed to send message');
   }
 };
