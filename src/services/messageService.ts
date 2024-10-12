@@ -45,16 +45,27 @@ export const sendMessageService = async (to: number, message: string) => {
 };
 
 export const processIncomingMessage = async (entry: Entry[]) => {
-  entry.forEach((val: Entry) => {
-    val.changes.forEach((change: Change) => {
+  if (!entry || entry.length === 0) return;
+
+  for (const val of entry) {
+    if (!val.changes || !Array.isArray(val.changes)) return; 
+
+    for (const change of val.changes) {
       if (change.field === 'messages') {
+        if (!change.value.messages) return;
         const message = change.value.messages[0];
         const contact = change.value.contacts[0];
+        let number = contact.wa_id;
+        if (number.startsWith('54')) {
+          number = `54${number.slice(3)}`;
+        }
 
-        console.log('Received message from:', contact.wa_id);
-        console.log('Message:', message.text.body);
+        console.log('Received message from:', number);
+        console.log("Message: ", message.text.body);
+        
+        await sendMessageService(parseInt(number, 10), "Bienvenido a Somni");
       }
-    });
-  });
-
+    }
+  }
 };
+
