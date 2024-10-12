@@ -48,13 +48,11 @@ export const processIncomingMessage = async (entry: Entry[]) => {
   entry.forEach((val: Entry) => {
     val.changes.forEach((change: Change) => {
       if (change.field === 'messages') {
-        const message = change.value.messages;
+        const message = change.value.messages[0];
         const contact = change.value.contacts[0];
 
         console.log('Received message from:', contact.wa_id);
-        for(const msg of message) {
-          console.log('Message:', msg.text.body);
-        }
+        console.log('Message:', message.text.body);
       }
     });
   });
